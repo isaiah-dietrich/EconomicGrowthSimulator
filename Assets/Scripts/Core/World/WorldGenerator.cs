@@ -1,29 +1,31 @@
 using System;
+using Unity.VisualScripting;
+using UnityEngine;
 
-public sealed class WorldGenerator
+public sealed class WorldGenerator : MonoBehaviour
 {
-    public WorldGrid Generate(int width, int height)
+    public WorldGrid WorldGrid { get; private set; }
+    [SerializeField] int width = 10;
+    [SerializeField] int height = 10;
+    public void Generate()
     {
-        if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width));
-        if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height));
 
-        WorldGrid worldGrid = new WorldGrid(width, height);
-        /*
-        NOTE: X and Y Coordinates are not equivalent to actual locations
-        */
+        WorldGrid = new WorldGrid(width, height);
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                worldGrid.Set(x, y, 
-                new Region(
+                WorldGrid.Set(x, y,
+                new HexTile(
                     terrain: TerrainType.Plains,
                     resource: null,
-                    ownerCountryId: null
+                    ownerCountryId: null,
+                    x,
+                    y
                     )
                 );
             }
         }
-        return worldGrid;
     }
 }
