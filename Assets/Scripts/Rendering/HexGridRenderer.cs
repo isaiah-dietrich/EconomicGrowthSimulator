@@ -1,46 +1,105 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class HexGridRenderer : MonoBehaviour
 {
-    [SerializeField] WorldGenerator worldGenerator;
-    [SerializeField] GameObject TilePreFab; 
-    //Out radius (Distance from center to corners)
-    private static float HexSize = 1f;
-    //In radius (Distance from center to edges) HexSize * cos(30) gives the radius of the inner circle
-    private static readonly float InRadius =  HexSize *  (float) (Math.Sqrt(3) / 2);
+    [Header("References")]
+    [SerializeField] private WorldGenerator worldGenerator;
+    [SerializeField] private GameObject TilePreFab;
 
-    private static readonly float Width = 2 * HexSize;
-    
-    private static readonly float Height = (float) Math.Sqrt(3) * HexSize;
+    [Header("Grid Settings")]
+    [Range(0.1f, 10f)]
+    [SerializeField] public float HexSize = 1f;
 
-    private static readonly float HorizontalDistance = (0.75f) * Width;
-    private static readonly float VerticalDistance = Height;
+    // Cache the square root of 3 for performance
+    private readonly float SQRT3 = Mathf.Sqrt(3f);
 
-    
+    /// <summary>
+    /// Calculates the 3D world position based on Odd-Q Flat-Top Hex Math.
+    /// </summary>
     public Vector3 GetWorldPosition(HexTile tile)
     {
+        // width = size * 2
+        // height = sqrt(3) * size
+        float width = HexSize * 2f;
+        float height = SQRT3 * HexSize;
 
-        float xPos = tile.X * HorizontalDistance;
-        float zPos = tile.Y * VerticalDistance;
+        // Horizontal spacing: columns are 3/4 of a width apart
+        float horizontalSpacing = width * 0.75f;
 
-        //If column is odd shift it by half the width (Radius)
-        if ((tile.X & 1) != 0)
+        // Vertical spacing: rows are the full height apart
+        float verticalSpacing = height;
+
+        float xPos = tile.X * horizontalSpacing;
+        float zPos = tile.Y * verticalSpacing;
+
+        // The "HoneyComb" Offset: shift odd columns by half a height
+        if (tile.X % 2 != 0)
         {
-            zPos += InRadius;
+            zPos += verticalSpacing / 2f;
         }
+
         return new Vector3(xPos, 0, zPos);
     }
 
+    /// <summary>
+    /// Clears the grid and spawns new tiles. 
+    /// Right-click the component in Inspector to call this manually via "Refresh Grid".
+    /// </summary>
+    [ContextMenu("Refresh Grid")]
     public void GenerateTiles()
     {
+        ClearGrid();
+
+        if (worldGenerator == null)
+        {
+            Debug.LogError("WorldGenerator reference missing on HexGridRenderer!");
+            return;
+        }
+
         worldGenerator.Generate();
 
+        // Loop through the 2D array data
         foreach (HexTile tile in worldGenerator.WorldGrid.GridData)
         {
+            if (tile == null) continue;
+
             Vector3 worldPosition = GetWorldPosition(tile);
-            Instantiate(TilePreFab, worldPosition, Quaternion.identity, transform);
-            
+
+            // Instantiating with 90-degree X rotation so 2D sprites lie flat on the 3D floor
+            GameObject go = Instantiate(TilePreFab, worldPosition, Quaternion.Euler(90, 0, 0), transform);
+
+            SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                if (tile.OwnerCountryId != null)
+                {
+                    
+                }
+                sr.color = GetColorForTerrain(tile.Terrain);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Safely removes all existing tile GameObjects.
+    /// </summary>
+    private void ClearGrid()
+    {
+        // Move children to a list first to avoid collection errors
+        List<GameObject> children = new List<GameObject>();
+        foreach (Transform child in transform)
+        {
+            children.Add(child.gameObject);
+        }
+
+        foreach (GameObject child in children)
+        {
+            // DestroyImmediate is only used when NOT playing to avoid editor memory leaks
+            if (Application.isPlaying)
+                Destroy(child);
+            else
+                DestroyImmediate(child);
         }
     }
 
@@ -48,4 +107,29 @@ public class HexGridRenderer : MonoBehaviour
     {
         GenerateTiles();
     }
+
+    /// <summary>
+    /// OnValidate is useful for live-tweaking, but we check if we are in Play Mode 
+    /// to avoid crashing Unity's editor while dragging sliders.
+    /// </summary>
+    private void OnValidate()
+    {
+        // Check for nulls to prevent errors during script recompilation
+        if (worldGenerator != null && Application.isPlaying)
+        {
+            GenerateTiles();
+        }
+    }
+
+    // Helper method to map your TerrainType class to Unity Colors
+    private Color GetColorForTerrain(TerrainType type)
+    {
+        if (type == TerrainType.Plains) return new Color(0.4f, 0.8f, 0.4f); // Grass Green
+        if (type == TerrainType.Mountains) return new Color(0.5f, 0.5f, 0.5f); // Stone Gray
+        if (type == TerrainType.Woods) return new Color(0.1f, 0.5f, 0.1f); // Dark Forest Green
+
+        return Color.white; // Default fallback
+    }
+
+
 }

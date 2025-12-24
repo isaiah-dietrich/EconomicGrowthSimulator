@@ -1,5 +1,5 @@
 using System;
-using Unity.VisualScripting;
+using Mono.Cecil;
 using UnityEngine;
 
 public sealed class WorldGenerator : MonoBehaviour
@@ -10,15 +10,30 @@ public sealed class WorldGenerator : MonoBehaviour
     public void Generate()
     {
 
+        System.Random rnd = new System.Random();
+
         WorldGrid = new WorldGrid(width, height);
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
+                int random = rnd.Next(1,4);
+                TerrainType randomTerrain;
+                if (random == 1)
+                {
+                    randomTerrain = TerrainType.Plains;
+                } else if (random == 2)
+                {
+                    randomTerrain = TerrainType.Mountains;
+                } else
+                {
+                    randomTerrain = TerrainType.Woods;
+                }
+
                 WorldGrid.Set(x, y,
                 new HexTile(
-                    terrain: TerrainType.Plains,
+                    terrain: randomTerrain,
                     resource: null,
                     ownerCountryId: null,
                     x,

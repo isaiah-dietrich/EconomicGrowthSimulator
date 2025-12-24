@@ -28,7 +28,7 @@ public sealed class WorldGrid
     */
     public void Set(int x, int y, HexTile hexTile)
     {
-        Grid[x, y] = hexTile;
+        Grid[x, y] = hexTile;       
     }
 
     public HexTile Get(int x, int y)
