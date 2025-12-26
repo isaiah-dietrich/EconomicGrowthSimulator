@@ -1,21 +1,20 @@
 using UnityEngine;
-/*
-    Interface for a resource
-*/
+
 public class ResourceType
 {
     public string? Name { get; }
 
-    public ResourceType(string? name)
+    public float Yield { get; }
+
+    public ResourceType(string? name, float yield)
     {
         this.Name = name;
+        this.Yield = yield;
     }
 
-    public static readonly ResourceType Wood = new ("Wood");
-    public static readonly ResourceType Iron = new ("Iron");
-    public static readonly ResourceType Coal = new ("Coal");
+    public static readonly ResourceType Wood = new("Wood", 5f);
+    public static readonly ResourceType Iron = new("Iron", 1f);
+    public static readonly ResourceType Coal = new("Coal", 3f);
+    public static readonly ResourceType Wheat = new("Wheat", 100f);
 
-
-
-                  
 }

@@ -1,12 +1,11 @@
 using System;
-using Mono.Cecil;
 using UnityEngine;
 
 public sealed class WorldGenerator : MonoBehaviour
 {
     public WorldGrid WorldGrid { get; private set; }
-    [SerializeField] int width = 10;
-    [SerializeField] int height = 10;
+    [SerializeField] int width = 100;
+    [SerializeField] int height = 100;
     public void Generate()
     {
 
@@ -18,34 +17,33 @@ public sealed class WorldGenerator : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                int random = rnd.Next(1, 4);
-                TerrainType randomTerrain;
-                if (random == 1)
+                // 2. Add Simple Terrain Logic
+                int terrainRoll = rnd.Next(1, 4);
+                TerrainType terrain = terrainRoll switch
                 {
-                    randomTerrain = TerrainType.Plains;
-                }
-                else if (random == 2)
-                {
-                    randomTerrain = TerrainType.Mountains;
-                }
-                else
-                {
-                    randomTerrain = TerrainType.Woods;
-                }
+                    1 => TerrainType.Plains,
+                    2 => TerrainType.Mountains,
+                    _ => TerrainType.Woods
+                };
 
-                WorldGrid.Set(x, y,
-                new HexTile(
-                    terrain: randomTerrain,
-                    resource: null,
-                    ownerCountryId: null,
-                    x,
-                    y
-                    )
-                );
+                // 3. CRITICAL: Add Resources!
+                // If it's Plains, give it Wheat. Otherwise null.
+                ResourceType? res = (terrain == TerrainType.Plains) ? ResourceType.Wheat : null;
+
+                WorldGrid.Set(x, y, new HexTile(terrain, res, null, x, y));
             }
         }
-        SpawnCountry(1, 2, 2);
-        SpawnCountry(2, 5, 5);
+        // 4. Inject the Grid into the Manager
+        // This connects the "Builder" to the "Manager"
+        if (CountryManager.Instance != null)
+        {
+            CountryManager.Instance.SetGameMap(WorldGrid);
+
+            SpawnCountry(1, 2, 2);
+            SpawnCountry(2, 5, 5);
+
+            CountryManager.Instance.RefreshCountryClaims();
+        }
     }
 
     public void SpawnCountry(int countryId, int x, int y)

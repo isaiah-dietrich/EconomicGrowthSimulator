@@ -78,7 +78,7 @@ public class HexGridRenderer : MonoBehaviour
                 if (owner != null)
                 {
                     // Lerp 40% towards the country color so you can still see terrain underneath
-                    sr.color = Color.Lerp(baseColor, owner.Color, 0.1f);
+                    sr.color = Color.Lerp(baseColor, owner.Color, 0.9f);
                 }
             }
             else
@@ -138,5 +138,7 @@ public class HexGridRenderer : MonoBehaviour
         return Color.white; // Default fallback
     }
 
+
+    
 
 }
