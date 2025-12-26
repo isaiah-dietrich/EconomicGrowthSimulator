@@ -16,7 +16,7 @@ public class HexTile
     /*
         Stores the ID of the country that owns the region or null
     */
-    public int? OwnerCountryId {get; private set;}
+    public int? OwnerCountryId {get; set;}
 
     public HexTile(TerrainType terrain, ResourceType? resource, int? ownerCountryId, int x, int y)
     {   

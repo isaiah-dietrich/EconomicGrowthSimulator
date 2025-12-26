@@ -65,18 +65,25 @@ public class HexGridRenderer : MonoBehaviour
             if (tile == null) continue;
 
             Vector3 worldPosition = GetWorldPosition(tile);
-
+            
             // Instantiating with 90-degree X rotation so 2D sprites lie flat on the 3D floor
             GameObject go = Instantiate(TilePreFab, worldPosition, Quaternion.Euler(90, 0, 0), transform);
 
             SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
-            if (sr != null)
+            Color baseColor = GetColorForTerrain(tile.Terrain);
+
+            if (tile.OwnerCountryId.HasValue && CountryManager.Instance != null)
             {
-                if (tile.OwnerCountryId != null)
+                Country owner = CountryManager.Instance.GetCountry(tile.OwnerCountryId.Value);
+                if (owner != null)
                 {
-                    
+                    // Lerp 40% towards the country color so you can still see terrain underneath
+                    sr.color = Color.Lerp(baseColor, owner.Color, 0.1f);
                 }
-                sr.color = GetColorForTerrain(tile.Terrain);
+            }
+            else
+            {
+                sr.color = baseColor;
             }
         }
     }

@@ -18,15 +18,17 @@ public sealed class WorldGenerator : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                int random = rnd.Next(1,4);
+                int random = rnd.Next(1, 4);
                 TerrainType randomTerrain;
                 if (random == 1)
                 {
                     randomTerrain = TerrainType.Plains;
-                } else if (random == 2)
+                }
+                else if (random == 2)
                 {
                     randomTerrain = TerrainType.Mountains;
-                } else
+                }
+                else
                 {
                     randomTerrain = TerrainType.Woods;
                 }
@@ -42,5 +44,22 @@ public sealed class WorldGenerator : MonoBehaviour
                 );
             }
         }
+        SpawnCountry(1, 2, 2);
+        SpawnCountry(2, 5, 5);
+    }
+
+    public void SpawnCountry(int countryId, int x, int y)
+    {
+        HexTile tile = WorldGrid.Get(x, y);
+
+        if (tile != null)
+        {
+            tile.SetOwner(countryId);
+        }
+        else
+        {
+            Debug.LogError($"Failed to spawn country {countryId} at {x},{y}. Spot is outside the map!");
+        }
+
     }
 }
