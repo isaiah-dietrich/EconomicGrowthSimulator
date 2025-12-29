@@ -5,7 +5,8 @@ using UnityEngine;
 Using Offset coordinates with a oddq grid type (Flat top)
 */
 public sealed class WorldGrid
-{
+{   
+    public static WorldGrid Instance { get; private set; }
 
     public int Width { get; }
     public int Height { get; }
@@ -16,6 +17,7 @@ public sealed class WorldGrid
 
     public WorldGrid(int width, int height)
     {
+        Instance = this;
 
         Grid = new HexTile[width, height];
         this.Width = width;

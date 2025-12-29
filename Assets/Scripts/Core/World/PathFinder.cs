@@ -4,12 +4,6 @@ using UnityEngine;
 //Implements Dijkstras algorithm to find shortest path between 2 hex tiles based on Terrain Movement Cost
 public class PathFinder
 {
-    private WorldGrid _grid;
-
-    public PathFinder(WorldGrid worldGrid)
-    {
-        this._grid = worldGrid;
-    }
     //Class implements Dijkastra's algorithm to find the Shortest path between 2 hex tiles
     //Adjacency list is the GetNeighbors() function
     protected class SearchNode : IComparable<SearchNode>
@@ -57,7 +51,7 @@ public class PathFinder
 
             if (current.Tile == end) return current;
 
-            foreach (HexTile neighbor in _grid.GetHexNeighbors(current.Tile))
+            foreach (HexTile neighbor in WorldGrid.Instance.GetHexNeighbors(current.Tile))
             {
                 if (neighbor != null && !visited.Contains(neighbor))
                 {

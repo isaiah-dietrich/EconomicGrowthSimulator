@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class HexGridRenderer : MonoBehaviour
 {
+    public static HexGridRenderer Instance { get; private set;}
     [Header("References")]
     [SerializeField] private WorldGenerator worldGenerator;
     [SerializeField] private GameObject TilePreFab;
@@ -110,11 +111,6 @@ public class HexGridRenderer : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        GenerateTiles();
-    }
-
     /// <summary>
     /// OnValidate is useful for live-tweaking, but we check if we are in Play Mode 
     /// to avoid crashing Unity's editor while dragging sliders.
@@ -126,6 +122,12 @@ public class HexGridRenderer : MonoBehaviour
         {
             GenerateTiles();
         }
+    }
+
+    private void Awake()
+    {
+        Instance = this;
+        GenerateTiles();
     }
 
     // Helper method to map your TerrainType class to Unity Colors
