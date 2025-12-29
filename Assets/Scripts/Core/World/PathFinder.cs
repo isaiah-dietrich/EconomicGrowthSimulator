@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 //Implements Dijkstras algorithm to find shortest path between 2 hex tiles based on Terrain Movement Cost
 public class PathFinder
@@ -46,14 +45,13 @@ public class PathFinder
             throw new System.Exception("Nodes cannot be null");
         }
         //TODO: Convert into a min heap
-        List<SearchNode> openList = new List<SearchNode>();
+        MinHeap<SearchNode> openList = new MinHeap<SearchNode>();
         HashSet<HexTile> visited = new HashSet<HexTile>();
 
-        openList.Add(new SearchNode(start));
+        openList.Push(new SearchNode(start));
         while (openList.Count > 0)
         {
-            SearchNode current = openList.OrderBy(n => n.Cost).First();
-            openList.Remove(current);
+            SearchNode current = openList.Pop();
             if (visited.Contains(current.Tile)) continue;
             visited.Add(current.Tile);
 
@@ -63,7 +61,7 @@ public class PathFinder
             {
                 if (neighbor != null && !visited.Contains(neighbor))
                 {
-                    openList.Add(new SearchNode(current, neighbor));
+                    openList.Push(new SearchNode(current, neighbor));
                 }
             }
         }
