@@ -21,6 +21,7 @@ public class PathRenderer : MonoBehaviour
         // SMOOTHING SETTINGS:
         lr.numCapVertices = 5;     // Rounds the End Points
         lr.numCornerVertices = 5;  // Rounds the Bends/Corners 
+        
     }
 
     void Start()
