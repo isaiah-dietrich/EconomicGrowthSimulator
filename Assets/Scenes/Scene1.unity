@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff3cf28b924efe04db2373892a5b75b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CountryManager
+  countryDatabase: {fileID: 11400000, guid: e39c88e433790451699385ec5d0f2bea, type: 2}
 --- !u!4 &419526628
 Transform:
   m_ObjectHideFlags: 0
@@ -476,7 +477,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10651484436fd4e2fa92c3b91aaf9b29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PathRenderer
-  TruckPrefab: {fileID: 2662654417286855371, guid: 0810e431dd5875b4ca2d49090a840410, type: 3}
 --- !u!120 &2143166383
 LineRenderer:
   serializedVersion: 3
@@ -596,7 +596,7 @@ Transform:
   m_GameObject: {fileID: 2143166381}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.8422, y: 0.75235, z: 0}
+  m_LocalPosition: {x: 2.16, y: 0.75235, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
