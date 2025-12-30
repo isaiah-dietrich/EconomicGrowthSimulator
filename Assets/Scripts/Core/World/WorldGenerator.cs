@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class WorldGenerator : MonoBehaviour
@@ -33,31 +34,7 @@ public sealed class WorldGenerator : MonoBehaviour
                 WorldGrid.Set(x, y, new HexTile(terrain, res, null, x, y));
             }
         }
-        // 4. Inject the Grid into the Manager
-        // This connects the "Builder" to the "Manager"
-        if (CountryManager.Instance != null)
-        {
-            CountryManager.Instance.SetGameMap(WorldGrid);
-
-            SpawnCountry(1, 2, 2);
-            SpawnCountry(2, 5, 5);
-
-            CountryManager.Instance.RefreshCountryClaims();
-        }
     }
 
-    public void SpawnCountry(int countryId, int x, int y)
-    {
-        HexTile tile = WorldGrid.Get(x, y);
 
-        if (tile != null)
-        {
-            tile.SetOwner(countryId);
-        }
-        else
-        {
-            Debug.LogError($"Failed to spawn country {countryId} at {x},{y}. Spot is outside the map!");
-        }
-
-    }
 }

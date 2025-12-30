@@ -13,6 +13,8 @@ public class Country
 
     public List<HexTile> ClaimedTiles { get; private set; }
 
+    public HexTile Capital { get; private set; }
+
     public Country(string name, Color color, int id, int startingPopulation)
     {
         this.Name = name;

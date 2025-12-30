@@ -9,8 +9,6 @@ public class CountryManager : MonoBehaviour
 
     private Dictionary<int, Country> countries = new Dictionary<int, Country>();
 
-    private WorldGrid worldGrid;
-
     private void OnEnable()
     {
         // Subscribe to the clock
@@ -67,7 +65,7 @@ public class CountryManager : MonoBehaviour
     {
         foreach (var pair in countries) pair.Value.ClaimedTiles.Clear();
 
-        foreach (HexTile tile in worldGrid.GridData)
+        foreach (HexTile tile in WorldGrid.Instance.GridData)
         {
             // 1. Check if the OwnerCountryId HAS a value (is not null)
             if (tile.OwnerCountryId.HasValue)
@@ -82,12 +80,4 @@ public class CountryManager : MonoBehaviour
             }
         }
     }
-
-    public void SetGameMap(WorldGrid grid)
-    {
-        this.worldGrid = grid;
-    }
-
-
-
 }
