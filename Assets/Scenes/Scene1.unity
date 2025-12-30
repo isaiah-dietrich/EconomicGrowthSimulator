@@ -476,6 +476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10651484436fd4e2fa92c3b91aaf9b29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PathRenderer
+  TruckPrefab: {fileID: 2662654417286855371, guid: 0810e431dd5875b4ca2d49090a840410, type: 3}
 --- !u!120 &2143166383
 LineRenderer:
   serializedVersion: 3

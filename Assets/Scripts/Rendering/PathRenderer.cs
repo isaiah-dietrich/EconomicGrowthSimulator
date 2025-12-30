@@ -7,6 +7,9 @@ public class PathRenderer : MonoBehaviour
 {
     private LineRenderer lr;
 
+    [Header("References")]
+    [SerializeField] private GameObject TruckPrefab;
+
     void Awake()
     {
         lr = GetComponent<LineRenderer>();
@@ -51,6 +54,19 @@ public class PathRenderer : MonoBehaviour
         for (int i = 0; i < vectors.Count; i++)
         {
             lr.SetPosition(i, vectors[i]);
+        }
+        //Logic to spawn truck
+        if (vectors.Count > 0 && TruckPrefab != null)
+        {
+            // Spawn at the start position
+            GameObject truck = Instantiate(TruckPrefab, vectors[0], Quaternion.identity);
+            
+            // Get the script and give it the path
+            TruckMover mover = truck.GetComponent<TruckMover>();
+            if (mover != null)
+            {
+                mover.SetPath(vectors);
+            }
         }
         
     }
