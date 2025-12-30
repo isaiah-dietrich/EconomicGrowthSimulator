@@ -1,33 +1,32 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 [System.Serializable]
 public class Country
 {
-    public string Name { get; }
-    public Color Color { get; }
-    public int Id;
+    public string Name { get; private set; }
+    public Color Color { get; private set; }
+    public int Id { get; private set; }
 
     public Inventory Inventory { get; private set; }
-
     public Demographics Stats { get; private set; }
 
     public List<HexTile> ClaimedTiles { get; private set; }
-
     public HexTile Capital { get; private set; }
 
-    public Country(string name, Color color, int id, int startingPopulation)
+    public Country(CountryDefinition def)
     {
-        this.Name = name;
-        this.Color = color;
-        this.Id = id;
+        Name = def.CountryName;
+        Color = def.Color;
+        Id = def.Id;
 
-        this.Inventory = new Inventory();
-        this.Stats = new Demographics(startingPopulation, 0.1f);
-
-        this.ClaimedTiles = new List<HexTile>();
-
-
+        Inventory = new Inventory();
+        Stats = new Demographics(def.StartingPopulation, 0.1f);
+        ClaimedTiles = new List<HexTile>();
     }
 
-
+    public void SetCapital(HexTile tile)
+    {
+        Capital = tile;
+    }
 }
