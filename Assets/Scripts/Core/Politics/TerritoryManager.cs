@@ -13,6 +13,11 @@ public sealed class TerritoryManager : MonoBehaviour
 
     public void ClaimTile(HexTile tile, Country country)
     {
+        if (country.Capital == null)
+        {
+            Debug.Log("Must have a capital before claiming a tile");
+            return;
+        }
         if (tile.OwnerCountryId == null)
 
             tile.OwnerCountryId = country.Id;
@@ -54,11 +59,13 @@ public sealed class TerritoryManager : MonoBehaviour
             Debug.Log("Cannot spawn capital on an owned tile.");
             return false;
         }
+        // Optional: set capital if you want
+        country.SetCapital(tile);
+        
         // claim center + neighbors
         ClaimTile(tile, country);
 
-        // Optional: set capital if you want
-        country.SetCapital(tile);
+        
 
         return true;
     }
