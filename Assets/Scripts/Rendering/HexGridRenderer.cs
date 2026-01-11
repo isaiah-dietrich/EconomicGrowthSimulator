@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class HexGridRenderer : MonoBehaviour
 {
-    public static HexGridRenderer Instance { get; private set;}
+    public static HexGridRenderer Instance { get; private set; }
     [Header("References")]
     [SerializeField] private WorldGenerator worldGenerator;
     [SerializeField] private GameObject TilePreFab;
@@ -11,6 +11,8 @@ public class HexGridRenderer : MonoBehaviour
     [Header("Grid Settings")]
     [Range(0.1f, 10f)]
     [SerializeField] public float HexSize = 1f;
+
+    private readonly Dictionary<HexTile, SpriteRenderer> tileToRenderer = new();
 
     // Cache the square root of 3 for performance
     private readonly float SQRT3 = Mathf.Sqrt(3f);
@@ -66,26 +68,18 @@ public class HexGridRenderer : MonoBehaviour
             if (tile == null) continue;
 
             Vector3 worldPosition = GetWorldPosition(tile);
-            
+
             // Instantiating with 90-degree X rotation so 2D sprites lie flat on the 3D floor
             GameObject go = Instantiate(TilePreFab, worldPosition, Quaternion.Euler(90, 0, 0), transform);
 
-            SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
-            Color baseColor = GetColorForTerrain(tile.Terrain);
+            //Creates a clickable tile
+            var view = go.GetComponent<HexTileView>();
+            if (view != null) view.Init(tile);
 
-            if (tile.OwnerCountryId.HasValue && CountryManager.Instance != null)
-            {
-                Country owner = CountryManager.Instance.GetCountry(tile.OwnerCountryId.Value);
-                if (owner != null)
-                {
-                    // Lerp 40% towards the country color so you can still see terrain underneath
-                    sr.color = Color.Lerp(baseColor, owner.Color, 0.9f);
-                }
-            }
-            else
-            {
-                sr.color = baseColor;
-            }
+            SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
+            tileToRenderer[tile] = sr;
+            ApplyColor(tile);
+
         }
     }
 
@@ -140,7 +134,28 @@ public class HexGridRenderer : MonoBehaviour
         return Color.white; // Default fallback
     }
 
+    public void ApplyColor(HexTile tile)
+    {
+        if (tile == null) return;
+        if (!tileToRenderer.TryGetValue(tile, out var sr) || sr == null) return;
 
-    
+        Color baseColor = GetColorForTerrain(tile.Terrain);
+
+        if (tile.OwnerCountryId.HasValue && CountryManager.Instance != null)
+        {
+            Country owner = CountryManager.Instance.GetCountry(tile.OwnerCountryId.Value);
+            if (owner != null)
+            {
+                sr.color = Color.Lerp(baseColor, owner.Color, 0.9f);
+                return;
+            }
+        }
+
+        sr.color = baseColor;
+    }
+
+
+
+
 
 }
