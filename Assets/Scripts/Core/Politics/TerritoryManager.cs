@@ -18,26 +18,34 @@ public sealed class TerritoryManager : MonoBehaviour
             Debug.Log("Must have a capital before claiming a tile");
             return;
         }
-        if (tile.OwnerCountryId == null)
-
+        if (tile.OwnerCountryId == null) {
             tile.OwnerCountryId = country.Id;
-        else
+            country.ClaimedTiles.Add(tile);
+            FrontlineManager.Instance.RecomputeFromClaimedTiles();
+
+        }
+        else {
             Debug.Log("Tile claimed by other country");
+        }
+
     }
 
     public void UnclaimTile(HexTile tile, Country country)
     {
         if (tile.OwnerCountryId == country.Id)
         {
+            country.ClaimedTiles.Remove(tile);
             tile.OwnerCountryId = null;
             if (tile.Equals(country.Capital)) {
                 country.SetCapital(null);
             }
+        FrontlineManager.Instance.RecomputeFromClaimedTiles();
         }
         else
         {
             Debug.Log("Tile is not claimed by this country");
         }
+
 
     }
 
